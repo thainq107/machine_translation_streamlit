@@ -4,6 +4,7 @@ import torch
 import streamlit as st
 from transformers import MBart50TokenizerFast, AutoModelForSeq2SeqLM
 
+@st.cache_resource
 def load_model(gdrive_id='1-boA9aNqG3AHdlGszo1rkbbIrzRI-bJ4'):
 
   model_path = 'mbart50-en-vi'
