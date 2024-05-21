@@ -15,15 +15,14 @@ def load_model(gdrive_id='1-boA9aNqG3AHdlGszo1rkbbIrzRI-bJ4'):
   model = AutoModelForSeq2SeqLM.from_pretrained(model_path)
   return tokenizer, model
 
-tokenizer, model = load_model()
-
+@st.cache_data
 def inference(
     text,
-    tokenizer,
-    model,
     max_length=75,
     beam_size=5
     ):
+
+    tokenizer, model = load_model()
     with torch.no_grad():
 
         inputs = tokenizer(text, return_tensors='pt')
@@ -42,7 +41,7 @@ def main():
   st.title('Machine Translation')
   st.title('Model: MBART50. Dataset: EN-VI')
   text_input = st.text_input("Sentence: ", "I go to school.")
-  result = inference(text_input, tokenizer, model)
+  result = inference(text_input)
   st.success(result) 
 
 if __name__ == '__main__':
