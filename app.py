@@ -2,18 +2,21 @@ import os
 import gdown
 import torch
 import streamlit as st
-from transformers import MBart50TokenizerFast, AutoModelForSeq2SeqLM
+from transformers import T5Tokenizer, T5ForConditionalGeneration
 
 @st.cache_resource
-def load_model(gdrive_id='1-boA9aNqG3AHdlGszo1rkbbIrzRI-bJ4'):
+def load_model(gdrive_id='13BlpbV2l0xBynkR1tYvY68WXAx4jPSkl'):
 
-  model_path = 'mbart50-en-vi'
+  model_path = 't5-small-en-vi'
   if not os.path.exists(model_path):
     # download folder
     gdown.download_folder(id=gdrive_id)
-  tokenizer = MBart50TokenizerFast.from_pretrained(model_path)
-  model = AutoModelForSeq2SeqLM.from_pretrained(model_path)
+  tokenizer = T5Tokenizer.from_pretrained(model_path)
+  model = T5ForConditionalGeneration.from_pretrained(model_path)
+  model.eval()
   return tokenizer, model
+
+tokenizer, model = load_model()
 
 @st.cache_data
 def inference(
@@ -21,21 +24,18 @@ def inference(
     max_length=75,
     beam_size=5
     ):
-    
-    tokenizer, model = load_model()
-    with torch.no_grad():
-
-        inputs = tokenizer(text, return_tensors='pt')
-        preds = model.generate(
-            inputs['input_ids'],
-            attention_mask=inputs['attention_mask'],
-            max_length=max_length,
-            num_beams=beam_size
-        )
-
-        preds = tokenizer.batch_decode(preds, skip_special_tokens=True)
+    tokenized_text = tokenizer.encode(text, return_tensors="pt")
+    summary_ids = model.generate(
+        tokenized_text,
+        max_length=max_length, 
+        num_beams=beam_size,
+        repetition_penalty=2.5, 
+        length_penalty=1.0, 
+        early_stopping=True
+    )
+    output = tokenizer.decode(summary_ids[0], skip_special_tokens=True)
       
-    return preds[0]
+    return output
 
 def main():
   st.title('Machine Translation')
