@@ -18,7 +18,6 @@ def load_model(gdrive_id='13BlpbV2l0xBynkR1tYvY68WXAx4jPSkl'):
 
 tokenizer, model = load_model()
 
-@st.cache_data
 def inference(
     text,
     max_length=75,
