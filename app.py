@@ -39,7 +39,7 @@ def inference(
 
 def main():
   st.title('Machine Translation')
-  st.title('Model: MBART50. Dataset: EN-VI')
+  st.title('Model: T5_SMALL. Dataset: EN-VI')
   text_input = st.text_input("Sentence: ", "I go to school.")
   result = inference(text_input)
   st.success(result) 
