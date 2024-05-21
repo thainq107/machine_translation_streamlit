@@ -15,14 +15,14 @@ def load_model(gdrive_id='1-boA9aNqG3AHdlGszo1rkbbIrzRI-bJ4'):
   model = AutoModelForSeq2SeqLM.from_pretrained(model_path)
   return tokenizer, model
 
+tokenizer, model = load_model()
+
 @st.cache_data
 def inference(
     text,
     max_length=75,
     beam_size=5
     ):
-
-    tokenizer, model = load_model()
     with torch.no_grad():
 
         inputs = tokenizer(text, return_tensors='pt')
